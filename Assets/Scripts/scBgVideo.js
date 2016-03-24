@@ -30,7 +30,7 @@ private var video:MovieTexture;
 public var nomVideo:String;
 
 function Awake() {
-    textureVideo = this.GetComponent(GUITexture);//Récupère le composant GUITexture.  
+    textureVideo = this.GetComponent(GUITexture);//RécupÃ¨re le composant GUITexture.  
     //load the movie texture from the resources folder  
     video = Resources.Load("Video/" + nomVideo) as MovieTexture;//Chargement du vidéo à partir du dossier Resources.
     //anamorphic fullscreen  
@@ -38,6 +38,18 @@ function Awake() {
 }
 
 function Start () {
-    video.loop = true;
+    if (SceneManager.GetActiveScene().name == "film") {
+        video.loop = false;
+        GetComponent.<AudioSource>().Play();
+    }
+    else {
+        video.loop = true;
+    }
     video.Play();
+}
+
+function Update () {
+    if (SceneManager.GetActiveScene().name == "film" && !video.isPlaying) {
+        SceneManager.LoadScene("menu");
+    }
 }

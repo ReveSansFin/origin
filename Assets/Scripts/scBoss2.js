@@ -357,7 +357,13 @@ function patrouiller () {
 function mort() {
 
 	sourceSon.PlayOneShot(sonMort);
-	    
+
+    if (estGele) {
+        navMeshBoss2.Resume();
+        estGele = false;
+        animateurBoss2.enabled = true;
+    }
+    
     navMeshBoss2.SetDestination(this.transform.position);//Brake
     animateurBoss2.SetTrigger('mort');
     navMeshBoss2.speed = vitesseArret;
@@ -372,6 +378,9 @@ function destructionBoss() {
     
     var bonus:GameObject = Instantiate (Resources.Load ("Prefabs/Objets/potionReveille")) as GameObject;
     bonus.transform.position = this.gameObject.transform.position;
+    
+    var scriptGestionJeu = GameObject.FindWithTag("heros").GetComponent.<scGestionJeu>();
+    scriptGestionJeu.jouerSonApparitionRecompense();
     
     Destroy(this.gameObject);
 }
@@ -458,4 +467,9 @@ function getSanteBoss() {
 //Met à jour l'état de santé du boss
 function setSanteBoss(valeurSante:float) {
     pointsVieBoss2 = valeurSante;
+}
+
+//Retourne estVivant
+function getEstVivant () {
+    return estVivant;
 }

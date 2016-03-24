@@ -231,14 +231,13 @@ function seReposer () {
 //Méthode qui détermine ce qui arrive quand le diable est tué, soit sa destruction et l'apparition d'une récompense.
 function mort() {
 
-	sourceSon.PlayOneShot(sonBlesse);
+	var scriptGestionJeu = GameObject.FindWithTag("heros").GetComponent.<scGestionJeu>();
+    scriptGestionJeu.jouerSonApparitionRecompense();
     
     var etoiles: GameObject = Instantiate (Resources.Load ("Prefabs/EmmeteursPreFabs/etoilesRecompense")) as GameObject;
     etoiles.transform.position = this.gameObject.transform.position;
     var bonus:GameObject = Instantiate (Resources.Load ("Prefabs/Objets/cupcake")) as GameObject;
     bonus.transform.position = this.gameObject.transform.position;
-    //bonus.AddComponent.<BoxCollider>();
-    //bonus.GetComponent(BoxCollider).isTrigger = true;
     bonus.tag = "bonbon";
     Destroy(this.gameObject);
 }

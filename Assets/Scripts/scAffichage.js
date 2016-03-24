@@ -1,6 +1,7 @@
 #pragma strict
 import UnityEngine.UI;
 // permet d'importer les éléments du UI canvas jeu
+import UnityEngine.EventSystems;
 
 /**
 * TP Assemblage de Jeu
@@ -34,6 +35,13 @@ private var heros:GameObject;
 * @var scHeros.js
 */
 private var gestionscHeros: scHeros;
+
+/*
+* Contient le script scGestionJeu
+* @access private
+* @var scGestionJeu
+*/
+private var scriptGestionJeu: scGestionJeu;
 
 /**
  * Limite la barre de vie
@@ -201,12 +209,21 @@ private var CanvasGroupMessageJoueur: CanvasGroup;
 **/
 public var affichageTempsVol: Text;
 
+/**
+*Panneau pause
+*@var GameObject
+*@access public
+**/
+public var panneauPause: GameObject;
+
 
 function Awake () {
     DontDestroyOnLoad (transform.gameObject);
 }
 
 function Start () {
+    
+    panneauPause.SetActive(false);
     
     affichageTempsVol.enabled = false;
     
@@ -238,6 +255,8 @@ function Start () {
 
     //:: Débuter le ALPHA des SPRITES UI
     RenderPotion1.color.a = 0.3 ;
+    
+    scriptGestionJeu = heros.GetComponent.<scGestionJeu>();
 }
 
 function Update () {
@@ -295,7 +314,7 @@ function Update () {
         case 2:
             RenderPotion1.color.a = 0.66; 
             break;
-        case 3:
+        default:
             RenderPotion1.color.a = 1;
             break;
     }
@@ -354,4 +373,14 @@ function OnLevelWasLoaded() {
         var cgGUI:CanvasGroup = GetComponent.<CanvasGroup>();
         cgGUI.alpha = 1;//Met le GUI-JEU visible après le chargement d'une sauvegarde (mit insivible au chargement par le menu pour éviter la superposition des éléments).
     }
+}
+
+function quitterJeu () {
+    Application.Quit();
+    Debug.Log("quitter");
+}
+
+function retourJeu () {
+    scriptGestionJeu.setEtatPause(false);
+    panneauPause.SetActive(false);
 }

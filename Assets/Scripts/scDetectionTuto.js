@@ -21,15 +21,22 @@ private var gestionscAffichageTuto: scAffichageTuto;
 */
 public var canvasTuto: GameObject;
 
-
+/**
+*Le script de gestion du jeu
+*@var scGestionJeu
+*@access private
+**/
+ private var scriptGestionJeu: scGestionJeu;
 
 function Start() {
+    canvasTuto = GameObject.FindWithTag("canvasTuto");
     gestionscAffichageTuto=canvasTuto.GetComponent.<scAffichageTuto>();//:: Chercher LE SCRIPT
+    scriptGestionJeu = GetComponent.<scGestionJeu>();
 }
 
 //:::::::::::::: OnTriggerEnter ::::::::::::::
 function OnTriggerEnter(other: Collider) {
-    
+
 //    Debug.Log(other.gameObject.tag);
     if(other.gameObject.tag)
     {
@@ -39,55 +46,55 @@ function OnTriggerEnter(other: Collider) {
             case "MessageBonbon":
                 //regleBonbon.informationBonbon(true);
                 gestionscAffichageTuto.messageBonbon.SetActive(true);
-                Time.timeScale=0;
+                scriptGestionJeu.setEtatPause(true);
                 Destroy(other.gameObject);
                 break;
 
             case "MessagePotionSort":
                 gestionscAffichageTuto.messagePotionSort.SetActive(true);
-                Time.timeScale=0;
+                scriptGestionJeu.setEtatPause(true);
                 Destroy(other.gameObject);
                 break;
 
             case "MessageOgre":
                 gestionscAffichageTuto.messageOgre.SetActive(true);
-                Time.timeScale=0;
+                scriptGestionJeu.setEtatPause(true);
                 Destroy(other.gameObject);
                 break;
 
             case "MessageFeeVolante":
                 gestionscAffichageTuto.messageFeeVolante.SetActive(true);
-                Time.timeScale=0;
+                scriptGestionJeu.setEtatPause(true);
                 Destroy(other.gameObject);
                 break;
 
             case "MessageDiable":
                 gestionscAffichageTuto.messageDiable.SetActive(true);
-                Time.timeScale=0;
+                scriptGestionJeu.setEtatPause(true);
                 Destroy(other.gameObject);
                 break;
 
             case "MessageFantome":
                 gestionscAffichageTuto.messageFantome.SetActive(true);
-                Time.timeScale=0;
+                scriptGestionJeu.setEtatPause(true);
                 Destroy(other.gameObject);
                 break;
 
             case "MessageLutin":
                 gestionscAffichageTuto.messageLutin.SetActive(true);
-                Time.timeScale=0;
+                scriptGestionJeu.setEtatPause(true);
                 Destroy(other.gameObject);
                 break;
 
             case "MessageBonbon":
                 gestionscAffichageTuto.messageBonbon.SetActive(true);
-                Time.timeScale=0;
+                scriptGestionJeu.setEtatPause(true);
                 Destroy(other.gameObject);
                 break;
 
             case "MessagePotionReveille":
                 gestionscAffichageTuto.messagePotionReveille.SetActive(true);
-                Time.timeScale=0;
+                scriptGestionJeu.setEtatPause(true);
                 Destroy(other.gameObject);
                 break;
         }

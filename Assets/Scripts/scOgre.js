@@ -322,7 +322,9 @@ function patrouiller () {
 //Méthode qui détermine ce qui arrive quand l'ogre est tué, soit sa destruction et l'apparition d'une récompense.
 function mort() {
 
-	sourceSon.PlayOneShot(sonMort);
+	var scriptGestionJeu = GameObject.FindWithTag("heros").GetComponent.<scGestionJeu>();
+    scriptGestionJeu.jouerSonApparitionRecompense();
+    
     var etoiles: GameObject = Instantiate (Resources.Load ("Prefabs/EmmeteursPreFabs/etoilesRecompense")) as GameObject;
     etoiles.transform.position = this.gameObject.transform.position;
     var bonus:GameObject = Instantiate (Resources.Load ("Prefabs/Objets/gateau")) as GameObject;

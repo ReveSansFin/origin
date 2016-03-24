@@ -93,14 +93,16 @@ function OnTriggerEnter(other:Collider) {
                 var scriptBoss1:scBoss1 = other.gameObject.GetComponent(scBoss1);
                 var animBoss1:Animator = other.gameObject.GetComponent(Animator);
                 
-                scriptBoss1.setEstGele(true);
-				agentEnnemiBoss1.Stop();
-                animBoss1.enabled = false;
-		        yield WaitForSeconds(vitesseDegele);
-                if (agentEnnemiBoss1) {
-                    agentEnnemiBoss1.Resume();
-                    scriptBoss1.setEstGele(false);
-                    animBoss1.enabled = true;
+                if (scriptBoss1.getEstVivant()) {
+                    scriptBoss1.setEstGele(true);
+                    agentEnnemiBoss1.Stop();
+                    animBoss1.enabled = false;
+                    yield WaitForSeconds(vitesseDegele);
+                    if (agentEnnemiBoss1) {
+                        agentEnnemiBoss1.Resume();
+                        scriptBoss1.setEstGele(false);
+                        animBoss1.enabled = true;
+                    }
                 }
             	break;
 
@@ -110,14 +112,16 @@ function OnTriggerEnter(other:Collider) {
                 var scriptBoss2:scBoss2 = other.gameObject.GetComponent(scBoss2);
                 var animBoss2:Animator = other.gameObject.GetComponent(Animator);
                 
-                scriptBoss2.setEstGele(true);
-				agentEnnemiBoss2.Stop();
-                animBoss2.enabled = false;
-		        yield WaitForSeconds(vitesseDegele);
-                if (agentEnnemiBoss2) {
-                    agentEnnemiBoss2.Resume();
-                    scriptBoss2.setEstGele(false);
-                    animBoss2.enabled = true;
+                if (scriptBoss2.getEstVivant()) {
+                    scriptBoss2.setEstGele(true);
+                    agentEnnemiBoss2.Stop();
+                    animBoss2.enabled = false;
+                    yield WaitForSeconds(vitesseDegele);
+                    if (agentEnnemiBoss2) {
+                        agentEnnemiBoss2.Resume();
+                        scriptBoss2.setEstGele(false);
+                        animBoss2.enabled = true;
+                    }
                 }
             	break;
         }

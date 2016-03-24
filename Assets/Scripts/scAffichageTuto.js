@@ -24,59 +24,75 @@ public var messageFantome:GameObject;
 public var messageLutin:GameObject;
 public var messagePotionReveille:GameObject;
 
+/**
+*Le script de gestion du jeu
+*@var scGestionJeu
+*@access private
+**/
+ private var scriptGestionJeu: scGestionJeu;
+
+function Start() {
+    scriptGestionJeu = GameObject.FindWithTag("heros").GetComponent.<scGestionJeu>();
+    scriptGestionJeu.setEtatPause(true);
+    if (SceneManager.GetActiveScene().name == "tutoriel") {
+        var heros:GameObject = GameObject.FindWithTag("heros");
+        var scriptDetectionTuto = heros.GetComponent.<scDetectionTuto>();
+        scriptDetectionTuto.enabled = true;
+    }
+}
 
  /* function qui permet de fermer le panneau d'information en un clic sur le X*/
 
  function fermerInformationHeros()
 {
 	messageHeros.SetActive(false);
-	Time.timeScale=1;
+	scriptGestionJeu.setEtatPause(false);
 }
 function fermerInformationBonbon()
 {
 	messageBonbon.SetActive(false);
-	Time.timeScale=1;
+	scriptGestionJeu.setEtatPause(false);
 }
 
 function fermerInformationPotionSort()
 {
 	messagePotionSort.SetActive(false);
-	Time.timeScale=1;
+	scriptGestionJeu.setEtatPause(false);
 }
 
 function fermerInformationOgre()
 {
 	messageOgre.SetActive(false);
-	Time.timeScale=1;
+	scriptGestionJeu.setEtatPause(false);
 }
 
 function fermerInformationFeeVolante()
 {
 	messageFeeVolante.SetActive(false);
-	Time.timeScale=1;
+	scriptGestionJeu.setEtatPause(false);
 }
 
 function fermerInformationDiable()
 {
 	messageDiable.SetActive(false);
-	Time.timeScale=1;
+	scriptGestionJeu.setEtatPause(false);
 }
 
 function fermerInformationFantome()
 {
 	messageFantome.SetActive(false);
-	Time.timeScale=1;
+	scriptGestionJeu.setEtatPause(false);
 }
 
 function fermerInformationLutin()
 {
 	messageLutin.SetActive(false);
-	Time.timeScale=1;
+	scriptGestionJeu.setEtatPause(false);
 }
 
 function fermerInformationPotionReveille()
 {
 	messagePotionReveille.SetActive(false);
-	Time.timeScale=1;
+	scriptGestionJeu.setEtatPause(false);
 }
 /* FiN function qui permet de fermer le panneau d'information en un clic sur le X*/

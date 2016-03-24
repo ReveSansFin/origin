@@ -98,7 +98,6 @@ function Start (){
 
 //Infliges des dommages aux Ennemis
 function OnTriggerEnter(other:Collider) {
-	sourceSon.PlayOneShot(sonFrapper);
 //    Debug.Log(other.gameObject);
     //:::::::::::::: Gérer le jeu
     if(other.gameObject.tag)
@@ -109,30 +108,35 @@ function OnTriggerEnter(other:Collider) {
 //                Debug.Log(other.gameObject.tag);
 		        scriptOgre = other.gameObject.GetComponent(scOgre);//Aller chercher le script de l'ogre
 		        scriptOgre.updateDommages(dommagesInfliges);//chercher la function updateDommages 
+                sourceSon.PlayOneShot(sonFrapper);
                 break;
 
             case "diable":
 //                Debug.Log(other.gameObject.tag);
 		        scriptDiable = other.gameObject.GetComponent(scDiable);//Aller chercher le script du diable
 		        scriptDiable.updateDommages(dommagesInfliges);//chercher la function updateDommages 
+                sourceSon.PlayOneShot(sonFrapper);
             	break;
 
             case "lutin":
 //            	Debug.Log(other.gameObject.tag);
 		        scriptLutin = other.gameObject.GetComponent(scLutin);//Aller chercher le script du Lutin
 		        scriptLutin.updateDommages(dommagesInfliges);//chercher la function updateDommages 
+                sourceSon.PlayOneShot(sonFrapper);
             	break;
 
             case "boss1":
 //                Debug.Log(other.gameObject.tag);
 		        scriptBoss1 = other.gameObject.GetComponent(scBoss1);//Aller chercher le script du Boss 1
 		        scriptBoss1.updateDommages(dommagesInfliges);//chercher la function updateDommages
+                sourceSon.PlayOneShot(sonFrapper);
             	break;
 
             case "boss2":
 //                Debug.Log(other.gameObject.tag);
 		        scriptBoss2 = other.gameObject.GetComponent(scBoss2);//Aller chercher le script du Boss 2
 		        scriptBoss2.updateDommages(dommagesInfliges);//chercher la function updateDommages 
+                sourceSon.PlayOneShot(sonFrapper);
             	break;
         }
 
