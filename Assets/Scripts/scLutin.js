@@ -241,11 +241,10 @@ function OnTriggerEnter(autreObjet:Collider)
 	{
         if (!contactHeros) {
             scriptHeros.reductionPotionSort();
+            sourceSon.PlayOneShot(sonRire);
         }
 	//Il y a contact avec le heros.
 		contactHeros=true;
-
-		sourceSon.PlayOneShot(sonRire);
 		
 //		Debug.Log(quantitePotionSort);
 	}	
@@ -336,18 +335,19 @@ function deplacementLutin()
 //function pour la mort du lutin
 
 function mortLutin()
-	{
+{
+    var scriptGestionJeu = GameObject.FindWithTag("heros").GetComponent.<scGestionJeu>();
+    scriptGestionJeu.jouerSonApparitionRecompense();
 
-		sourceSon.PlayOneShot(sonBlesse);
-        var etoiles: GameObject = Instantiate (Resources.Load ("Prefabs/EmmeteursPreFabs/etoilesRecompense")) as GameObject;
-        etoiles.transform.position = this.gameObject.transform.position;
-		var bonus:GameObject = Instantiate (Resources.Load ("Prefabs/Objets/potionSort")) as GameObject;
+    var etoiles: GameObject = Instantiate (Resources.Load ("Prefabs/EmmeteursPreFabs/etoilesRecompense")) as GameObject;
+    etoiles.transform.position = this.gameObject.transform.position;
+    var bonus:GameObject = Instantiate (Resources.Load ("Prefabs/Objets/potionSort")) as GameObject;
 //		Debug.Log(bonus);
-    	//bon x	qsa	Q		Qs		
-		bonus.transform.position = lutin.transform.position;
-		Destroy(lutin);
-		//Debug.Log('mortLutin');
-	}
+    //bon x	qsa	Q		Qs		
+    bonus.transform.position = lutin.transform.position;
+    Destroy(lutin);
+    //Debug.Log('mortLutin');
+}
 
 //:::::::::::::: function updateDommages :::::::::::::://
 function updateDommages(dommages:float) 

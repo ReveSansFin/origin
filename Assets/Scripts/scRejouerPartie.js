@@ -31,3 +31,10 @@ function retournerMenu()
 {
     SceneManager.LoadScene("menu");
 }
+
+//Pour quitter le jeu
+function quitterJeu()
+{
+    PlayerPrefs.SetInt("partieSauvegardee", 0);//Reset valeur à false.
+    Application.Quit();
+}

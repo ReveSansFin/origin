@@ -1,4 +1,4 @@
-﻿#pragma strict
+#pragma strict
 
 /**
 * Script de gestion musique ouvert/ferme
@@ -12,13 +12,6 @@
 * @var AudioSource
 */
 private var sourceSon: AudioSource;
-
-/*
-* la musique du menu debut
-* @access public
-* @var AudioClip
-*/
-public var musiqueMenu: AudioClip;
 
 /*
 * la musique du niveau 1
@@ -41,67 +34,39 @@ public var musiqueNiveau2: AudioClip;
 */
 public var musiqueBoss: AudioClip;
 
-private var nomScene: String;
-
-function Start () {
-	sourceSon = GetComponent.<AudioSource>();
-
-	nomScene = SceneManager.GetActiveScene().name;
-
-	choisirMusique(nomScene);
+function Awake() {
+    
+    sourceSon = GetComponent.<AudioSource>();
+    sourceSon.loop = true;
 }
 
-function Update () {
+function choisirMusique(nomScene:String) {
 
-}
-
-function choisirMusique(nomScene){
-
-	switch(nomScene){
-
-		case "menu":
-			sourceSon.clip = musiqueMenu;
-			sourceSon.Play();
-		break;
-
-		case "choixPerso":
-			sourceSon.clip = musiqueMenu;
-			sourceSon.Play();
-		break;
-
-		case "gagnant":
-			sourceSon.clip = musiqueMenu;
-			sourceSon.Play();
-		break;
-
-		case "gameOver":
-			sourceSon.clip = musiqueMenu;
-			sourceSon.Play();
-		break;
+	switch(nomScene.ToLower()){
 
 		case "tutoriel":
 			sourceSon.clip = musiqueNiveau1;
 			sourceSon.Play();
-		break;
-
+		  break;
 		case "niveau1":
 			sourceSon.clip = musiqueNiveau1;
 			sourceSon.Play();
-		break;
-
+		  break;
 		case "niveau2":
 			sourceSon.clip = musiqueNiveau2;
 			sourceSon.Play();
-		break;
-
+		  break;
 		case "boss1":
 			sourceSon.clip = musiqueBoss;
 			sourceSon.Play();
-		break;
-
+		  break;
 		case "boss2":
 			sourceSon.clip = musiqueBoss;
 			sourceSon.Play();
-		break;
+		  break;
 	}
+}
+
+function OnLevelWasLoaded() {
+    choisirMusique(SceneManager.GetActiveScene().name);
 }

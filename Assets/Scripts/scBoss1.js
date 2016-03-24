@@ -281,7 +281,7 @@ function Start () {
 
 function Update () {
 
-    if (pointsVieBoss1 <= 0) {//le boss1 est mort
+    if (pointsVieBoss1 <= 0 && estVivant) {//le boss1 est mort
 
         estVivant = false;
         mort();
@@ -356,13 +356,17 @@ function patrouiller () {
 //Methode qui determine ce qui arrive quand le boss1 est tue, soit sa destruction et l'apparition d'une recompense.
 function mort() {
 
-	sourceSon.PlayOneShot(sonMort);
-	    
+    sourceSon.PlayOneShot(sonMort);
+    
+    if (estGele) {
+        navMeshBoss1.Resume();
+        estGele = false;
+        animateurBoss1.enabled = true;
+    }
     navMeshBoss1.SetDestination(this.transform.position);//Brake
     animateurBoss1.SetBool('mort', true);
     navMeshBoss1.speed = vitesseArret;
     gestionscAffichage.AfficherPanneauBarreVieEnnemi(false);//ne pas afficher Barre de vie de Ennemi
-
 }
 
 //Détruit le boss et instancie la potion qui permet de passer au niveau suivant.
@@ -373,6 +377,9 @@ function destructionBoss() {
     
     var bonus:GameObject = Instantiate (Resources.Load ("Prefabs/Objets/potionReveille")) as GameObject;
     bonus.transform.position = this.gameObject.transform.position;
+    
+    var scriptGestionJeu = GameObject.FindWithTag("heros").GetComponent.<scGestionJeu>();
+    scriptGestionJeu.jouerSonApparitionRecompense();
     
     Destroy(this.gameObject);
 }
@@ -450,6 +457,11 @@ function updateDommages(dommages:float) {
 //Gèle et dégèle l'ennemi avant et après avoir été touché par un sort
 function setEstGele (state:boolean) {
     estGele = state;
+}
+
+//Retourne estVivant
+function getEstVivant () {
+    return estVivant;
 }
 
 //Retourne l'état de santé du boss

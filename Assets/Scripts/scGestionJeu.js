@@ -65,9 +65,37 @@ private var scriptHeros: scHeros;
  /*
 * Variable de contrôle pour les points de vies du boss de la sauvegarde
 * @access private
-* @var false
+* @var boolean
 */
  private var santeBossSauvegarde:boolean = false;
+
+/*
+* Variable de permet de savoir si le jeu est en pause
+* @access private
+* @var boolean
+*/
+private var enPause:boolean = false;
+
+/*
+* Ajoute un audioSource pour jouer des sons en simultanné
+* @access public
+* @var GameObject
+*/
+public var speaker2: GameObject;
+
+/*
+* Ajoute un audioSource pour jouer des sons en simultanné (récompense / mort boss)
+* @access public
+* @var AudioSource
+*/
+private var sourceSonSpeaker2: AudioSource;
+
+/*
+* AudioSource principal
+* @access public
+* @var AudioSource
+*/
+private var sourceSon: AudioSource;
 
 
 function Awake () {
@@ -75,6 +103,9 @@ function Awake () {
 }
 
 function Start () {
+    
+    sourceSon = GetComponent.<AudioSource>();
+    sourceSonSpeaker2 = speaker2.GetComponent.<AudioSource>();
     
     scriptHeros = GetComponent.<scHeros>();
     
@@ -87,15 +118,26 @@ function Start () {
 
 function Update () {
 
-    if (SceneManager.GetActiveScene().name != "tutoriel" && SceneManager.GetActiveScene().name != "gagnant" && SceneManager.GetActiveScene().name != "gameOver" && SceneManager.GetActiveScene().name != "menu" && SceneManager.GetActiveScene().name != "choixPerso") {
-        
-        //Effacer la sauvegarde
-        if (Input.GetKeyDown(KeyCode.F5)) {
-            PlayerPrefs.DeleteKey("niveau");
-            PlayerPrefs.SetInt("partieSauvegardee", 0);
-            PlayerPrefs.Save();
-            gestionscAffichage.afficherMessage("Sauvegarde effacée");
+    if (Input.GetKeyDown(KeyCode.Escape)) {
+        if (enPause) {
+            enPause = false;
+            gestionscAffichage.panneauPause.SetActive(false);
         }
+        else {
+            enPause = true;
+            gestionscAffichage.panneauPause.SetActive(true);
+        }
+    }
+    
+    if (enPause) {
+        Time.timeScale = 0;
+    }
+    else {
+        Time.timeScale = 1;
+    }
+    
+    if (SceneManager.GetActiveScene().name != "tutoriel" && SceneManager.GetActiveScene().name != "gagnant" && SceneManager.GetActiveScene().name != "gameOver" && SceneManager.GetActiveScene().name != "menu" && SceneManager.GetActiveScene().name != "choixPerso" && SceneManager.GetActiveScene().name != "film") {
+        
         //Sauvegarder
         if (Input.GetKeyDown(KeyCode.F9)) {
 
@@ -113,6 +155,14 @@ function Update () {
                 PlayerPrefs.SetString("niveau", SceneManager.GetActiveScene().name.ToLower());
                 PlayerPrefs.SetString("heros", this.gameObject.transform.name);
                 PlayerPrefs.SetString("dateSauvegarde", System.DateTime.Now.ToString());
+                var mouseLook:scLookAtMouse = GetComponent.<scLookAtMouse>();
+                
+                if (mouseLook.enabled == true) {
+                    PlayerPrefs.SetInt("mouseLook", 1);
+                }
+                else {
+                    PlayerPrefs.SetInt("mouseLook", 0);
+                }
 
                 if (SceneManager.GetActiveScene().name.ToLower() == "boss1" || SceneManager.GetActiveScene().name.ToLower() == "boss2") {
                     var boss1:GameObject = GameObject.FindWithTag("boss1");
@@ -189,6 +239,17 @@ function Update () {
                 if (PlayerPrefs.HasKey("santeBoss")) {
                     scriptGestionJeu.setSanteBossSauvegarde(true);
                 }
+                if (PlayerPrefs.HasKey("mouseLook")) {
+                    var mouseLookSauvegarde:int = PlayerPrefs.GetInt("mouseLook");
+                    var scriptMouse:scLookAtMouse = heros.GetComponent.<scLookAtMouse>();
+
+                    if (mouseLookSauvegarde == 1) {
+                        scriptMouse.enabled = true;
+                    }
+                    else {
+                       scriptMouse.enabled = false; 
+                    }
+                }
                 Destroy(this.gameObject);
             }
             else {
@@ -208,13 +269,13 @@ function OnTriggerEnter(other: Collider) {
             //:::::::::::::: Gestion des objets trouvées
             case "bonbon":
                 JoueSonVictoire();
-                scriptHeros.augmenterSante(5);
+                scriptHeros.augmenterSante(10);
                 Destroy(other.gameObject);
                 break;
 
             case "gateau":
                 JoueSonVictoire();
-                scriptHeros.augmenterSante(10);
+                scriptHeros.augmenterSante(20);
                 Destroy(other.gameObject);
                 break;
 
@@ -251,7 +312,7 @@ function OnTriggerEnter(other: Collider) {
 
 //:::::::::::::: function jouer une fois l'AudioVictoire :::::::::::::://
 function JoueSonVictoire(){
-    GetComponent.<AudioSource>().PlayOneShot(AudioVictoire);
+    sourceSon.PlayOneShot(AudioVictoire);
 }
 
 function setNbPotionsReveille(nbPotions:int) {
@@ -290,10 +351,28 @@ function OnLevelWasLoaded() {
             }
         }
     }
+    if (PlayerPrefs.GetInt("partieSauvegardee") == 1) {
+        yield WaitForSeconds(1);
+        PlayerPrefs.SetInt("partieSauvegardee", 0);
+    }
 }
 
 //Quand on quite le jeu
 function OnApplicationQuit () {
     
     PlayerPrefs.SetInt("partieSauvegardee", 0);//Reset valeur à false.
+}
+
+//Permet de savoir si le jeu est en pause
+function getEtatPause() {
+    return enPause;
+}
+
+//Permet de mettre le jeu en pause ou de le "dépauser"
+function setEtatPause(etat:boolean) {
+    enPause = etat;
+}
+
+function jouerSonApparitionRecompense() {
+    sourceSonSpeaker2.Play();
 }

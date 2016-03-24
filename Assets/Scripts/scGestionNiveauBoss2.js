@@ -11,7 +11,7 @@
 * @access private
 * @var Vector3
 */
-private var positionDepartHeros:Vector3 = new Vector3(1,2.4,-108);
+private var positionDepartHeros:Vector3 = new Vector3(0.5,2.5,-109);
 //private var positionDepartHeros:Vector3 = new Vector3(1,2.4,-6.7);//Pour débuter près du boss. Pour fins de test.
 
 /*
@@ -22,7 +22,7 @@ private var positionDepartHeros:Vector3 = new Vector3(1,2.4,-108);
 private var heros:GameObject;
 
 function Start () {
-    
+
     if (PlayerPrefs.GetInt("partieSauvegardee") == 0) {
         heros = GameObject.FindWithTag("heros");
         heros.transform.position = positionDepartHeros;//Replace le héros en position de départ au chargement du niveau.

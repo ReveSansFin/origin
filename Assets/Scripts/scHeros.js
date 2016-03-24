@@ -100,16 +100,6 @@ private var voler: boolean = false;
 */
 private var marcher: boolean = false;
 
-
-//::::::::::::::::::::://
-/**
-* Indiquer si est en train de courir
-* @access private
-* @var boolean
-*/
-//private var courir: boolean = false;
-
-
 //::::::::::::::::::::://
 /**
 * Contient le controleur d'animation
@@ -247,6 +237,34 @@ public var sonBlesse: AudioClip;
 */
 public var epee: GameObject;
 
+/*
+* Ajoute un audioSource pour jouer des sons en simultanné
+* @access public
+* @var GameObject
+*/
+public var speaker1: GameObject;
+
+/*
+* Ajoute un audioSource pour jouer des sons en simultanné (swoosh épée)
+* @access public
+* @var AudioSource
+*/
+private var sourceSonSpeaker1: AudioSource;
+
+/*
+* Ajoute un audioSource pour jouer des sons en simultanné
+* @access public
+* @var GameObject
+*/
+public var speaker3: GameObject;
+
+/*
+* Ajoute un audioSource pour jouer des sons en simultanné (vent pour vol)
+* @access public
+* @var AudioSource
+*/
+private var sourceSonSpeaker3: AudioSource;
+
 /**
 *Le script de gestion du jeu
 *@var scGestionJeu
@@ -273,7 +291,14 @@ private var tempsVolRestant: float;
 *@var float
 *@access public
 **/
-public var dureeVol: int = 10;
+public var dureeVol: int = 20;
+
+/**
+*Détermine si le héros est en train de voler
+*@var float
+*@access private
+**/
+private var enVol:boolean = false;
 
 
 //:::::::::::Awake :::::::::://
@@ -286,6 +311,9 @@ function Awake()
 //:::::::::::Start :::::::::://
 function Start () 
 {
+    sourceSonSpeaker1 = speaker1.GetComponent.<AudioSource>();
+    sourceSonSpeaker3 = speaker3.GetComponent.<AudioSource>();
+    
     tempsVolRestant = dureeVol;
     
     var canvas:GameObject = GameObject.FindWithTag("canvas");
@@ -308,159 +336,176 @@ function Start ()
 //:::::::::::::: UPDATE :::::::::::::://
 function Update()
 {    
-//    Debug.Log(sante);
-    sante -= (vitesseDim * Time.deltaTime);
-//:::::::::::::: GERER VIES :::::::::://
-    
-    if(vies == 0)
-    {
-    	
-        PlayerPrefs.SetInt("partieSauvegardee", 0);
-        SceneManager.LoadScene("gameOver");
-    }
 
-//:::::::::::::: GERER DEPLACEMENT :::::::::://
-    
-    //Permet de donner une marge de tolérence à la propriété "auSol" qui détermine si le heros peut sauter.
-    //-------------------------------------
+    if (!scriptGestionJeu.getEtatPause()) {
+        //    Debug.Log(sante);
+        sante -= (vitesseDim * Time.deltaTime);
+    //:::::::::::::: GERER VIES :::::::::://
 
-    if (controller.isGrounded) {
-        enSaut = false;
-        tempsAuSol = Time.time;
-        animateur.SetBool('saut', false);
-    }
-    if (Time.time - tempsAuSol < toleranceAuSol) {
-        auSol = true;
-    }
-    else {
-        auSol = false;
-    }
-    //-------------------------------------
-    
-    //:: Lecture des variables d'axe
-    var inputX = Input.GetAxis('Horizontal');   
-    var inputY = Input.GetAxis('Vertical');
-
-    //:: Application de la rotation directement sur le transform
-    transform.Rotate(0, inputX * vitesseRot, 0);
-    animateur.SetFloat('vitesseRot', inputX);
-    
-//:::::::::::::: GERER SAUT :::::::::://
-    
-    if(Input.GetKeyDown('space') && !enSaut && !voler)//:: Si space est enfoncé et que le heros n'est pas en train de voler
-    {
-        dirMouvement.y = vitesseSaut; // Calcul du mouvement saut
-        animateur.SetBool('animCourse', false);
-        animateur.SetBool('saut', true);
-       
-        sourceSon.PlayOneShot(sonSaut);
-       
-        inputY = 0;//Pour ameliorer l'animation
-        enSaut = true;
-    }
-    
-    if((auSol && !enSaut) || voler)//s'il est sol OU si voler est true 
-    {
-        
-//:::::::::::::: GERER DEPLACEMENT :::::::::://
-        
-        dirMouvement = Vector3(0, 0, inputY);   // Calcul du mouvement
-        //:: dire à l'animator d'utiliser cette variable du code
-        dirMouvement = transform.TransformDirection(dirMouvement);
-        dirMouvement *= vitesse;
-
-        
-//:::::::::::::: GERER COURSE :::::::::://
-        
-        if(Input.GetKey('left shift') && !voler)
+        if(vies == 0)
         {
-            vitesse = vitesseCourse;
-            animCourse = true;
+
+            PlayerPrefs.SetInt("partieSauvegardee", 0);
+            SceneManager.LoadScene("gameOver");
         }
-        else
+
+    //:::::::::::::: GERER DEPLACEMENT :::::::::://
+
+        //Permet de donner une marge de tolérence à la propriété "auSol" qui détermine si le heros peut sauter.
+        //-------------------------------------
+
+        if (controller.isGrounded) {
+            enSaut = false;
+            tempsAuSol = Time.time;
+            animateur.SetBool('saut', false);
+        }
+        if (Time.time - tempsAuSol < toleranceAuSol) {
+            auSol = true;
+        }
+        else {
+            auSol = false;
+        }
+        //-------------------------------------
+
+        //:: Lecture des variables d'axe
+        var inputX = Input.GetAxis('Horizontal');   
+        var inputY = Input.GetAxis('Vertical');
+
+        //:: Application de la rotation directement sur le transform
+        transform.Rotate(0, inputX * vitesseRot, 0);
+        animateur.SetFloat('vitesseRot', inputX);
+
+    //:::::::::::::: GERER SAUT :::::::::://
+
+        if(Input.GetKeyDown('space') && !enSaut && !voler)//:: Si space est enfoncé et que le heros n'est pas en train de voler
         {
-            vitesse = vitesseMarche;
-            animCourse = false;
-           
+            dirMouvement.y = vitesseSaut; // Calcul du mouvement saut
+            animateur.SetBool('animCourse', false);
+            animateur.SetBool('saut', true);
+
+            sourceSon.PlayOneShot(sonSaut);
+
+            inputY = 0;//Pour ameliorer l'animation
+            enSaut = true;
         }
-    
-//:::::::::::::: GERER VOLER :::::::::://
-//source rotation: http://docs.unity3d.com/ScriptReference/Transform-rotation.html
-        if (voler) {
-            
-            if (tempsVolRestant >= 0) {
-                tempsVolRestant -= Time.deltaTime;
-                gestionAffichage.affichageTempsVol.text = "Vol : " + Mathf.Round(tempsVolRestant).ToString();
+
+        if((auSol && !enSaut) || voler)//s'il est sol OU si voler est true 
+        {
+
+    //:::::::::::::: GERER DEPLACEMENT :::::::::://
+
+            dirMouvement = Vector3(0, 0, inputY);   // Calcul du mouvement
+            //:: dire à l'animator d'utiliser cette variable du code
+            dirMouvement = transform.TransformDirection(dirMouvement);
+            dirMouvement *= vitesse;
+
+
+    //:::::::::::::: GERER COURSE :::::::::://
+
+            if(Input.GetKey('left shift') && !voler)
+            {
+                vitesse = vitesseCourse;
+                animCourse = true;
             }
-            else {
-                gestionAffichage.affichageTempsVol.enabled = false;
-                animateur.SetBool('voler', false);//:: dire à l'animator d'utiliser cette variable du code
-                if (!auSol) {
+            else
+            {
+                vitesse = vitesseMarche;
+                animCourse = false;
+
+            }
+
+    //:::::::::::::: GERER VOLER :::::::::://
+    //source rotation: http://docs.unity3d.com/ScriptReference/Transform-rotation.html
+            if (voler) {
+
+                if (tempsVolRestant >= 0) {
+                    tempsVolRestant -= Time.deltaTime;
+                    var tempsAffichage = Mathf.Round(tempsVolRestant);
+                    gestionAffichage.affichageTempsVol.text = tempsAffichage.ToString() + " sec";
+                    if (tempsAffichage <= 5) {
+                        gestionAffichage.affichageTempsVol.color = new Color (0.64,0.11,0.14,1);
+                    }
+                    else if (tempsAffichage <= 10) {
+                        gestionAffichage.affichageTempsVol.color = new Color (0.91,0.86,0.3,1);
+                    }
+                    else {
+                        gestionAffichage.affichageTempsVol.color = new Color (1, 1, 1, 1);
+                    }
+                }
+                else {
+                    gestionAffichage.affichageTempsVol.enabled = false;
+                    animateur.SetBool('voler', false);//:: dire à l'animator d'utiliser cette variable du code
+                    if (!auSol) {
+                        enSaut = true;
+                    }
+                    sourceSon.clip = sonFinVol;
+                    sourceSon.Play();
+                    sourceSonSpeaker3.Stop();
+                    voler = false;
+                    enVol = false;
+                }
+
+                //Monter dans les airs
+                if(Input.GetKey('left shift')) {
+                    if (!enVol && voler) {
+                        sourceSonSpeaker3.Play();
+                        animateur.SetBool('saut', false);
+                        animateur.SetBool('voler', true);//:: dire à l'animator d'utiliser cette variable du code
+                        enVol = true;
+                    }
+                    if (this.transform.position.y < hauteurMaxVol) {
+                        var monter:Vector3 = new Vector3(0,0,0);
+                        monter.x = this.transform.position.x;
+                        monter.y = hauteurMaxVol;
+                        monter.z = this.transform.position.z;
+                        transform.position = Vector3.Slerp(transform.position, monter, Time.deltaTime * 1);
+                    }
+                }
+                //Descendre
+                else if (Input.GetKey(KeyCode.LeftControl)) {
+                    var descendre:Vector3 = new Vector3(0,0,0);
+                    descendre.x = this.transform.position.x;
+                    descendre.y = 0;
+                    descendre.z = this.transform.position.z;
+                    transform.position = Vector3.Slerp(transform.position, descendre, Time.deltaTime * 1);
+                }
+    //            if(tempsVolRestant > 0  && tempsVolRestant< 0.1){
+    //            	sourceSon.clip = sonFinVol;
+    //            	sourceSon.Play();
+    //            }
+                //Fin du vol
+                if (Input.GetKey(KeyCode.X)) {
+                    sourceSonSpeaker3.Stop();
+                    sourceSon.clip = sonFinVol;
+                    sourceSon.Play();
+                    gestionAffichage.affichageTempsVol.enabled = false;
+                    animateur.SetBool('voler', false);//:: dire à l'animator d'utiliser cette variable du code
                     enSaut = true;
+                    voler = false;
+                    enVol = false;
+
                 }
-                voler = false;
-            }
-            if (Input.GetKeyDown('left shift')) {
-                animateur.SetBool('saut', false);
-                animateur.SetBool('voler', true);//:: dire à l'animator d'utiliser cette variable du code
-            }
-            
-            //Monter dans les airs
-            if(Input.GetKey('left shift')) {
-                if (this.transform.position.y < hauteurMaxVol) {
-                    var monter:Vector3 = new Vector3(0,0,0);
-                    monter.x = this.transform.position.x;
-                    monter.y = hauteurMaxVol;
-                    monter.z = this.transform.position.z;
-                    transform.position = Vector3.Slerp(transform.position, monter, Time.deltaTime * 1);
-                }
-            }
-            //Descendre
-            else if (Input.GetKey(KeyCode.LeftControl)) {
-                var descendre:Vector3 = new Vector3(0,0,0);
-                descendre.x = this.transform.position.x;
-                descendre.y = 0;
-                descendre.z = this.transform.position.z;
-                transform.position = Vector3.Slerp(transform.position, descendre, Time.deltaTime * 1);
-            }
-            if(tempsVolRestant > 0  && tempsVolRestant< 0.1){
-            	sourceSon.clip = sonFinVol;
-            	sourceSon.Play();
-            }
-            //Fin du vol
-            if (Input.GetKey(KeyCode.X)) {
-                gestionAffichage.affichageTempsVol.enabled = false;
-                animateur.SetBool('voler', false);//:: dire à l'animator d'utiliser cette variable du code
-                enSaut = true;
-                voler = false;
 
             }
-          
+        }//FIN controller    
+
+        //:: Application de la gravite au mouvement
+        dirMouvement.y -= gravite*Time.deltaTime;
+        //:: Affectation du mouvement au Character controller
+        controller.Move(dirMouvement * Time.deltaTime);
+        animateur.SetFloat('vitesseDeplace', inputY);
+        animateur.SetBool('animCourse', animCourse);
+
+        //:::::::::::::: GERER ATTAQUE :::::::::://
+        if(Input.GetButtonDown("Fire1"))//:: Si clic gauche est enfoncé
+        {
+            animateur.SetTrigger('animAttack');
+            //:: dire à l'animator d'utiliser cette variable du code
         }
-    }//FIN controller    
 
-    //:: Application de la gravite au mouvement
-    dirMouvement.y -= gravite*Time.deltaTime;
-    //:: Affectation du mouvement au Character controller
-    controller.Move(dirMouvement * Time.deltaTime);
-    animateur.SetFloat('vitesseDeplace', inputY);
-    animateur.SetBool('animCourse', animCourse);
-
-    //:::::::::::::: GERER ATTAQUE :::::::::://
-    if(Input.GetButtonDown("Fire1"))//:: Si clic gauche est enfoncé
-    {
-        animateur.SetTrigger('animAttack');
-        //:: dire à l'animator d'utiliser cette variable du code
-    }
-
-    if(Input.GetButtonUp("Fire1"))//:: Si clic gauche est enfoncé
-    {
-        animateur.SetBool('animAttack', false);
-        //:: dire à l'animator d'utiliser cette variable du code
-    }
-    
-    if(Input.GetKeyDown(KeyCode.M) || Input.GetMouseButtonDown(2)) {
-        toggleLookAtMouse();
+        if(Input.GetMouseButtonDown(2)) {
+            toggleLookAtMouse();
+        }
     }
 }//FIN UPDATE
 
@@ -620,6 +665,7 @@ function toggleColliderEpee() {
     }
     else {
         ColliderEpee.enabled = true;
+        sourceSonSpeaker1.Play();
     }
 }
 
@@ -643,4 +689,3 @@ function toggleLookAtMouse() {
 function setHauteurMaxVol(hauteur:float) {
     hauteurMaxVol = hauteur;
 }
-
